@@ -2,6 +2,8 @@ import Head from 'next/head'
 
 import { GetStaticProps } from 'next';
 
+import Prismic from '@prismicio/client'
+
 import { getPrismicClient } from '../services/prismic';
 
 import { FiCalendar, FiUser, FiClock } from 'react-icons/fi'
@@ -67,9 +69,16 @@ export default function Home() {
   )
 }
 
-// export const getStaticProps = async () => {
-//   // const prismic = getPrismicClient();
-//   // const postsResponse = await prismic.query(TODO);
+export const getStaticProps = async () => {
+  const prismic = getPrismicClient();
+  const postsResponse = await prismic.query([
+    Prismic.Predicates.at('document.type', 'posts')
+  ], {
+    fetch: ['posts.tile', 'posts.subtitle', 'posts.author', 'posts.banner', 'posts.content'],
+    pageSize: 100,
+  });
 
-//   // TODO
-// };
+  console.log(postsResponse)
+
+
+};
