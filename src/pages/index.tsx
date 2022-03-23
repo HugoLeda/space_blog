@@ -12,6 +12,7 @@ import Header from '../components/Header';
 
 import commonStyles from '../styles/common.module.scss';
 import styles from './home.module.scss';
+import { getPrismicClient } from '../services/prismic';
 
 interface Post {
   uid?: string;
@@ -69,20 +70,19 @@ export default function Home() {
   )
 }
 
-import { createClient } from '../services/prismic'
-
-export async function getStaticProps({ previewData }) {
-  const client = createClient({ previewData })
-
-  const page = await client.getByUID('page', 'home')
-
-  return {
-    props: { page }, // Will be passed to the page component as props
-  }
-}
-/*
 export const getStaticProps = async () => {
+  const prismic = getPrismicClient();
+    
+  const postsResponse = await prismic.query([
+    Prismic.predicates.at('document.type', 'posts')
+  ], {
+    fetch: ['posts.title', 'posts.subtitle', 'posts.author'],
+    pageSize: 5
+  });
   
-
+  console.log(JSON.stringify(postsResponse, null, 2))
+  //   // TODO
+  return {
+    props: {}
+  }
 };
-*/
