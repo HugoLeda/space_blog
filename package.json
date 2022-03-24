@@ -10,14 +10,10 @@
     "coverage": "jest --coverage"
   },
   "dependencies": {
-<<<<<<< HEAD
-    "@prismicio/client": "^6.3.0",
-    "@prismicio/types": "^0.1.27",
+    "@prismicio/client": "^4.0.0",
+    "@prismicio/next": "^0.1.0",
     "@types/is-svg": "^4.0.1",
     "@types/next": "^9.0.0",
-=======
-    "@prismicio/client": "^4.0.0",
->>>>>>> parent of 670dff1 (add styles home)
     "date-fns": "^2.19.0",
     "next": "10.0.7",
     "prismic-dom": "^2.2.5",
