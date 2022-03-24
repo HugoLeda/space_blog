@@ -98,9 +98,8 @@ export const getStaticProps = async () => {
     }
   })
   
-  console.log(postsResponse)
-  console.log('dsds')
-  console.log(posts)
+  //console.log(postsResponse)  
+  //console.log(posts)
 
   return {
     props: { posts, next_page: postsResponse.next_page }
