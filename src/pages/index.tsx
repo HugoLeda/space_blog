@@ -1,18 +1,16 @@
 import Head from 'next/head'
-
 import { GetStaticProps } from 'next';
 
 import Prismic from '@prismicio/client'
-
-//import { getPrismicClient } from '../services/prismic';
+import { getPrismicClient } from '../services/prismic';
 
 import { FiCalendar, FiUser, FiClock } from 'react-icons/fi'
-
 import Header from '../components/Header';
 
 import commonStyles from '../styles/common.module.scss';
 import styles from './home.module.scss';
-import { getPrismicClient } from '../services/prismic';
+import { RichText } from 'prismic-dom';
+import { useState } from 'react';
 
 interface Post {
   uid?: string;
@@ -33,7 +31,22 @@ interface HomeProps {
   postsPagination: PostPagination;
 }
 
-export default function Home() {
+export default function Home({PostPagination: { next_page, results }}, HomeProps) {
+
+  const [posts, setPosts] = useState(results)
+  const [nextPage, setNextPage] = useState(next_page)
+
+  const loadMore = async () => {
+    await fetch(next_page)
+            .then(response => response.json())
+            .then(response => {
+              {
+                setPosts([...posts,  ...response.results]);
+                setNextPage(response.next_page)                
+              }
+            })
+  }
+
   return (
     <>
       <Head>
@@ -41,30 +54,19 @@ export default function Home() {
       </Head>
       <Header/>
         <main className={styles.listPosts}>
-          <div className={styles.post}>
-            <h1>
-              Como utilizar hooks
-            </h1>
-            <p>
-              Pensando em sincronização em vez de ciclos de vida
-            </p>
-            <div>
-              <FiCalendar/> <span>15 mar 2022</span>
-              <FiUser/> <span>Rafaela Rosolem </span>
-            </div>          
-          </div>
-          <div className={styles.post}>
-            <h1>
-              Como utilizar hooks
-            </h1>
-            <p>
-              Pensando em sincronização em vez de ciclos de vida
-            </p>
-            <div>
-              <FiCalendar/> <span>15 mar 2022</span>
-              <FiUser/> <span>Rafaela Rosolem </span>
-            </div>          
-          </div>
+          
+            {posts.map(post => (
+              <>
+                <div className={styles.post}>
+                  <h1>{post.title}</h1>
+                  <p>{post.subtitle}</p>
+                  <div>
+                    <FiCalendar/> <span>{posts.first_publication_date}</span>
+                    <FiUser/> <span>{posts.author}</span>
+                  </div> 
+                </div>
+              </>
+            ))}          
         </main>
     </>
   )
@@ -77,12 +79,30 @@ export const getStaticProps = async () => {
     Prismic.predicates.at('document.type', 'posts')
   ], {
     fetch: ['posts.title', 'posts.subtitle', 'posts.author'],
-    pageSize: 5
+    pageSize: 2
   });
   
-  console.log(JSON.stringify(postsResponse, null, 2))
-  //   // TODO
+  const posts = postsResponse.results.map(post => {
+    return {
+      uid: post.uid,      
+      first_publication_date: new Date(post.last_publication_date).toLocaleDateString('pt-br', {
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric'
+      }),
+      data: {
+        title: post.data.title,
+        subtitle: post.data.subtitle,
+        author: post.data.author
+      }
+    }
+  })
+  
+  console.log(postsResponse)
+  console.log('dsds')
+  console.log(posts)
+
   return {
-    props: {}
+    props: { posts, next_page: postsResponse.next_page }
   }
 };
