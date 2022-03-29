@@ -31,7 +31,7 @@ interface HomeProps {
   postsPagination: PostPagination;
 }
 
-export default function Home({PostPagination: { next_page, results }}, HomeProps) {
+export default function Home({ next_page, results }) {
 
   const [posts, setPosts] = useState(results)
   const [nextPage, setNextPage] = useState(next_page)
@@ -56,16 +56,14 @@ export default function Home({PostPagination: { next_page, results }}, HomeProps
         <main className={styles.listPosts}>
           
             {posts.map(post => (
-              <>
-                <div className={styles.post}>
-                  <h1>{post.title}</h1>
-                  <p>{post.subtitle}</p>
-                  <div>
-                    <FiCalendar/> <span>{posts.first_publication_date}</span>
-                    <FiUser/> <span>{posts.author}</span>
-                  </div> 
-                </div>
-              </>
+              <div className={styles.post} key={post.uid}>
+                <h1>{post.title}</h1>
+                <p>{post.subtitle}</p>
+                <div>
+                  <FiCalendar/> <span>{posts.first_publication_date}</span>
+                  <FiUser/> <span>{posts.author}</span>
+                </div> 
+              </div>
             ))}          
         </main>
     </>
@@ -82,7 +80,7 @@ export const getStaticProps = async () => {
     pageSize: 2
   });
   
-  const posts = postsResponse.results.map(post => {
+  const results = postsResponse.results.map(post => {
     return {
       uid: post.uid,      
       first_publication_date: new Date(post.last_publication_date).toLocaleDateString('pt-br', {
@@ -96,12 +94,11 @@ export const getStaticProps = async () => {
         author: post.data.author
       }
     }
-  })
+  });
   
-  //console.log(postsResponse)  
-  //console.log(posts)
+  const postsPagination = { results, next_page: postsResponse.next_page };
 
   return {
-    props: { posts, next_page: postsResponse.next_page }
+    props: postsPagination
   }
 };
