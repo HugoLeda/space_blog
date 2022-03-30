@@ -31,7 +31,7 @@ interface HomeProps {
   postsPagination: PostPagination;
 }
 
-export default function Home({ next_page, results }) {
+export default function Home({ postsPagination:{results, next_page} }: HomeProps) {
 
   const [posts, setPosts] = useState(results)
   const [nextPage, setNextPage] = useState(next_page)
@@ -41,7 +41,22 @@ export default function Home({ next_page, results }) {
             .then(response => response.json())
             .then(response => {
               {
-                setPosts([...posts,  ...response.results]);
+                const results = response.results.map(post => {
+                  return {
+                    uid: post.uid,      
+                    first_publication_date: new Date(post.last_publication_date).toLocaleDateString('pt-br', {
+                      day: '2-digit',
+                      month: 'short',
+                      year: 'numeric'
+                    }),
+                    data: {
+                      title: post.data.title,
+                      subtitle: post.data.subtitle,
+                      author: post.data.author
+                    }
+                  }
+                });
+                setPosts([...posts,  ...results]);
                 setNextPage(response.next_page)                
               }
             })
@@ -57,14 +72,18 @@ export default function Home({ next_page, results }) {
           
             {posts.map(post => (
               <div className={styles.post} key={post.uid}>
-                <h1>{post.title}</h1>
-                <p>{post.subtitle}</p>
+                <h1>{post.data.title}</h1>
+                <p>{post.data.subtitle}</p>
                 <div>
-                  <FiCalendar/> <span>{posts.first_publication_date}</span>
-                  <FiUser/> <span>{posts.author}</span>
+                  <FiCalendar/> <span>{post.first_publication_date}</span>
+                  <FiUser/> <span>{post.data.author}</span>
                 </div> 
               </div>
-            ))}          
+            ))} 
+
+            <p onClick={ () => { loadMore() } }>
+              Carregar mais posts
+            </p>         
         </main>
     </>
   )
@@ -99,6 +118,6 @@ export const getStaticProps = async () => {
   const postsPagination = { results, next_page: postsResponse.next_page };
 
   return {
-    props: postsPagination
+    props: {postsPagination}
   }
 };
