@@ -1,5 +1,6 @@
 import Head from 'next/head'
 import { GetStaticProps } from 'next';
+import Link from 'next/link';
 
 import Prismic from '@prismicio/client'
 import { getPrismicClient } from '../services/prismic';
@@ -37,7 +38,7 @@ export default function Home({ postsPagination:{results, next_page} }: HomeProps
   const [nextPage, setNextPage] = useState(next_page)
 
   const loadMore = async () => {
-    await fetch(next_page)
+    await fetch(nextPage)
             .then(response => response.json())
             .then(response => {
               {
@@ -57,7 +58,7 @@ export default function Home({ postsPagination:{results, next_page} }: HomeProps
                   }
                 });
                 setPosts([...posts,  ...results]);
-                setNextPage(response.next_page)                
+                setNextPage(response.next_page)                                
               }
             })
   }
@@ -72,7 +73,9 @@ export default function Home({ postsPagination:{results, next_page} }: HomeProps
           
             {posts.map(post => (
               <div className={styles.post} key={post.uid}>
-                <h1>{post.data.title}</h1>
+                <Link href={"/post/" + post.uid}> 
+                  <a>{post.data.title}</a>                  
+                </Link>
                 <p>{post.data.subtitle}</p>
                 <div>
                   <FiCalendar/> <span>{post.first_publication_date}</span>
@@ -82,7 +85,7 @@ export default function Home({ postsPagination:{results, next_page} }: HomeProps
             ))} 
 
             <p onClick={ () => { loadMore() } }>
-              Carregar mais posts
+              { nextPage === null ? '' : 'Carregar mais posts'}              
             </p>         
         </main>
     </>
