@@ -45,4 +45,3 @@ export default function Post() {
 //   const response = await prismic.getByUID(TODO);
 
 //   // TODO
-
