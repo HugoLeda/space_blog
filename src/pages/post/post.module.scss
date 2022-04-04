@@ -1,1 +1,32 @@
-// TODO
+.container {
+  img {
+    width: 100%;
+    height: 25rem;
+  }
+}
+
+.postContent {
+  max-width: 721px;
+  margin: 2rem auto;
+  color: var(--info);
+
+  h1 {
+    font-size: 3rem;
+  }
+
+  .postInfos {
+    line-height: 22px;
+    color: var(--info);
+    font-size: 0.875rem;
+
+    display: flex;
+    align-items: center;
+
+    margin-top: 0.5rem;
+
+    span {
+      font-weight: 400;   
+      margin: 0 1rem 0 0.5rem;   
+    }
+  }
+}
