@@ -96,19 +96,19 @@ export default function Post({
         <section>
           <article className={styles.postContent}>
             <h1>{post.data.title}</h1>
-            <div className={styles.postInfos}>
-              <time>
-                <FiCalendar />
+            <div className={styles.postInfos}>              
+              <FiCalendar />
+              <span>
                 {format(new Date(post.first_publication_date), 'dd MMM yyyy', {
                   locale: ptBR,
                 })}
-              </time>
+              </span>
+              <FiUser />
               <span>
-                <FiUser />
                 {post.data.author}
               </span>
-              <span>
-                <FiClock />
+              <FiClock />
+              <span>                
                 {readTime} min
               </span>
             </div>
@@ -142,7 +142,7 @@ export default function Post({
               {post.data.content.map(postContent => {
                 return (
                   <div key={postContent.heading}>
-                    <h2>{postContent.heading}</h2>
+                    <h1>{postContent.heading}</h1>
                     <div
                       dangerouslySetInnerHTML={{
                         __html: RichText.asHtml(postContent.body),
@@ -152,29 +152,29 @@ export default function Post({
                 );
               })}
             </div>
-          </article>
-          <footer className={styles.navigationController}>
-            <div>
-              {prevPost && (
-                <Link href={`/post/${prevPost.uid}`}>
-                  <a>
-                    <h4>{prevPost.data.title}</h4>
-                    <span>Post anterior</span>
-                  </a>
-                </Link>
-              )}
-            </div>
-            <div>
-              {nextPost && (
-                <Link href={`/post/${nextPost.uid}`}>
-                  <a>
-                    <h4>{nextPost.data.title}</h4>
-                    <span>Próximo post</span>
-                  </a>
-                </Link>
-              )}
-            </div>
-          </footer>
+            <footer>
+              <div>
+                {prevPost && (
+                  <Link href={`/post/${prevPost.uid}`}>
+                    <a>
+                      <span>Post anterior</span>
+                      <h4>{prevPost.data.title}</h4>                      
+                    </a>
+                  </Link>
+                )}
+              </div>
+              <div>
+                {nextPost && (
+                  <Link href={`/post/${nextPost.uid}`}>
+                    <a>
+                      <span>Próximo post</span>
+                      <h4>{nextPost.data.title}</h4>                      
+                    </a>
+                  </Link>
+                )}
+              </div>
+            </footer>
+          </article>          
           <UtterancesComments />
           {preview && (
             <aside className={commonStyles.exitPreviewButton}>
