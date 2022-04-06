@@ -118,23 +118,11 @@ export default function Post({
                   * editado em{' '}
                   <time>
                     {format(
-                      new Date(post.last_publication_date),
-                      'dd MMM yyyy',
-                      {
-                        locale: ptBR,
-                      }
+                        new Date(post.first_publication_date),
+                        'dd MMM yyyy',
+                        { locale: ptBR }
                     )}
-                  </time>
-                  , às{' '}
-                  <time>
-                    {format(
-                      new Date(post.last_publication_date),
-                      `${'HH'}:${'mm'}`,
-                      {
-                        locale: ptBR,
-                      }
-                    )}
-                  </time>
+                  </time>                  
                 </span>
               </div>
             )}
@@ -244,6 +232,6 @@ export const getStaticProps: GetStaticProps = async ({
       prevPost: prevPost.results[0] ?? null,
       post: response,
     },
-    revalidate: 60 * 5, // 5 minutes
+    revalidate: 60 * 60 * 24, // 1 day
   };
 };

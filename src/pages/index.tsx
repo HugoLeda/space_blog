@@ -8,10 +8,11 @@ import { getPrismicClient } from '../services/prismic';
 import { FiCalendar, FiUser, FiClock } from 'react-icons/fi'
 import Header from '../components/Header';
 
-import commonStyles from '../styles/common.module.scss';
 import styles from './home.module.scss';
 import { RichText } from 'prismic-dom';
 import { useState } from 'react';
+import { format } from 'date-fns';
+import ptBR from 'date-fns/locale/pt-BR';
 
 interface Post {
   uid?: string;
@@ -45,11 +46,7 @@ export default function Home({ postsPagination:{results, next_page} }: HomeProps
                 const results = response.results.map(post => {
                   return {
                     uid: post.uid,      
-                    first_publication_date: new Date(post.last_publication_date).toLocaleDateString('pt-br', {
-                      day: '2-digit',
-                      month: 'short',
-                      year: 'numeric'
-                    }),
+                    first_publication_date: post.first_publication_date,
                     data: {
                       title: post.data.title,
                       subtitle: post.data.subtitle,
@@ -78,7 +75,15 @@ export default function Home({ postsPagination:{results, next_page} }: HomeProps
                 </Link>
                 <p>{post.data.subtitle}</p>
                 <div>
-                  <FiCalendar/> <span>{post.first_publication_date}</span>
+                  <FiCalendar/> 
+                  <span>
+                    {/*post.first_publication_date*/}
+                    {format(
+                        new Date(post.first_publication_date),
+                        'dd MMM yyyy',
+                        { locale: ptBR }
+                    )}
+                  </span>
                   <FiUser/> <span>{post.data.author}</span>
                 </div> 
               </div>
@@ -92,16 +97,17 @@ export default function Home({ postsPagination:{results, next_page} }: HomeProps
   )
 }
 
-export const getStaticProps = async () => {
+export const getStaticProps: GetStaticProps = async () => {
   const prismic = getPrismicClient();
     
   const postsResponse = await prismic.query([
     Prismic.predicates.at('document.type', 'posts')
   ], {
-    fetch: ['posts.title', 'posts.subtitle', 'posts.author'],
+    //fetch: ['posts.title', 'posts.subtitle', 'posts.author'],
     pageSize: 2
   });
   
+  /*
   const results = postsResponse.results.map(post => {
     return {
       uid: post.uid,      
@@ -117,10 +123,12 @@ export const getStaticProps = async () => {
       }
     }
   });
+  */
   
-  const postsPagination = { results, next_page: postsResponse.next_page };
+  const postsPagination = { results: postsResponse.results, next_page: postsResponse.next_page };
 
   return {
-    props: {postsPagination}
+    props: {postsPagination},
+    revalidate: 60 * 60 
   }
 };
